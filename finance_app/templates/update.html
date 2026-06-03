@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Records - Finance App{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <h2>{% if edit_record %}Edit Record{% else %}Add New Record{% endif %}</h2>
+    <form method="post">
+      <input type="hidden" name="record_id" value="{{ edit_record.id if edit_record else '' }}" />
+      <div class="form-group">
+        <label for="name">Client Name</label>
+        <input id="name" name="name" value="{{ edit_record.name if edit_record else '' }}" required />
+      </div>
+      <div class="form-group">
+        <label for="transaction_date">Transaction Date</label>
+        <input id="transaction_date" name="transaction_date" type="date" value="{{ edit_record.transaction_date if edit_record else '' }}" required />
+      </div>
+      <div class="form-group">
+        <label for="month">Month</label>
+        <input id="month" name="month" type="month" value="{{ edit_record.month if edit_record else '' }}" required />
+      </div>
+      <div class="form-group">
+        <label for="transaction_type">Type</label>
+        <select id="transaction_type" name="transaction_type" required>
+          <option value="due" {% if edit_record and edit_record.due_amount > 0 %}selected{% endif %}>Due</option>
+          <option value="payment" {% if edit_record and edit_record.payment_amount > 0 %}selected{% endif %}>Payment</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="amount">Amount</label>
+        <input id="amount" name="amount" type="number" step="0.01" value="{% if edit_record %}{{ edit_record.due_amount if edit_record.due_amount > 0 else edit_record.payment_amount }}{% else %}0.00{% endif %}" required />
+      </div>
+      <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" rows="3">{{ edit_record.notes if edit_record else '' }}</textarea>
+      </div>
+      <button class="button" type="submit">Save Record</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Existing Records</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Month</th>
+          <th>Due</th>
+          <th>Payment</th>
+          <th>Pending</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in records %}
+          <tr>
+            <td>{{ record.id }}</td>
+            <td>{{ record.name }}</td>
+            <td>{{ record.transaction_date }}</td>
+            <td>{{ record.month }}</td>
+            <td>${{ record.due_amount }}</td>
+            <td>${{ record.payment_amount }}</td>
+            <td>${{ record.due_amount - record.payment_amount }}</td>
+            <td><a class="button button-secondary" href="{{ url_for('update', edit_id=record.id) }}">Edit</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

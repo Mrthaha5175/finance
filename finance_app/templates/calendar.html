@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Calendar - Finance App{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <h2>Monthly Calendar</h2>
+    <form method="get" action="{{ url_for('calendar') }}">
+      <div class="form-group">
+        <label for="month">Select month</label>
+        <input id="month" name="month" type="month" value="{{ selected_month }}" required />
+      </div>
+      <button class="button" type="submit">Show Month</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Summary for {{ selected_month }}</h2>
+    <p>Total due: <strong>${{ total_due }}</strong></p>
+    <p>Total paid: <strong>${{ total_paid }}</strong></p>
+    <p>Pending due: <strong>${{ total_pending }}</strong></p>
+  </div>
+
+  <div class="card">
+    <h2>Records for {{ selected_month }}</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Month</th>
+          <th>Due</th>
+          <th>Payment</th>
+          <th>Pending</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in records %}
+          <tr>
+            <td>{{ record.id }}</td>
+            <td>{{ record.name }}</td>
+            <td>{{ record.transaction_date }}</td>
+            <td>{{ record.month }}</td>
+            <td>${{ record.due_amount }}</td>
+            <td>${{ record.payment_amount }}</td>
+            <td>${{ record.due_amount - record.payment_amount }}</td>
+            <td>{{ record.notes }}</td>
+          </tr>
+        {% endfor %}
+        {% if records|length == 0 %}
+          <tr><td colspan="7">No records found for this month.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

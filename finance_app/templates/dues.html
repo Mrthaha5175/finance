@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Client Dues - Finance App{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <h2>Download Excel</h2>
+    <p>Export the current dues report to an Excel file for offline review.</p>
+    <a class="button" href="{{ url_for('download_excel') }}">Download Excel</a>
+  </div>
+
+  <div class="card">
+    <h2>Pending Dues</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Month</th>
+          <th>Due</th>
+          <th>Payment</th>
+          <th>Pending</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in pending %}
+          <tr>
+            <td>{{ record.name }}</td>
+            <td>{{ record.month }}</td>
+            <td>${{ record.due_amount }}</td>
+            <td>${{ record.payment_amount }}</td>
+            <td>${{ record.due_amount - record.payment_amount }}</td>
+          </tr>
+        {% endfor %}
+        {% if pending|length == 0 %}
+          <tr><td colspan="5">No pending dues.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Paid Records</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Month</th>
+          <th>Due</th>
+          <th>Payment</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in paid %}
+          <tr>
+            <td>{{ record.name }}</td>
+            <td>{{ record.month }}</td>
+            <td>${{ record.due_amount }}</td>
+            <td>${{ record.payment_amount }}</td>
+            <td>{{ record.notes }}</td>
+          </tr>
+        {% endfor %}
+        {% if paid|length == 0 %}
+          <tr><td colspan="5">No fully paid records.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

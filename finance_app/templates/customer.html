@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Customer {{ name }} - Finance App{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <h2>{{ name }} Details</h2>
+    <p>Total due: <strong>${{ total_due }}</strong></p>
+    <p>Total paid: <strong>${{ total_paid }}</strong></p>
+    <p>Pending: <strong>${{ total_pending }}</strong></p>
+  </div>
+
+  <div class="card">
+    <h2>Add Transaction for {{ name }}</h2>
+    <form method="post">
+      <div class="form-group">
+        <label for="transaction_date">Date</label>
+        <input id="transaction_date" name="transaction_date" type="date" value="{{ request.form.transaction_date or '' }}" required />
+      </div>
+      <div class="form-group">
+        <label for="transaction_type">Type</label>
+        <select id="transaction_type" name="transaction_type" required>
+          <option value="due">Due</option>
+          <option value="payment">Payment</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="amount">Amount</label>
+        <input id="amount" name="amount" type="number" step="0.01" value="{{ request.form.amount or '0.00' }}" required />
+      </div>
+      <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" rows="3">{{ request.form.notes or '' }}</textarea>
+      </div>
+      <button class="button" type="submit">Save Transaction</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Transaction History</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Date</th>
+          <th>Month</th>
+          <th>Due</th>
+          <th>Payment</th>
+          <th>Pending</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in records %}
+          <tr>
+            <td>{{ record.id }}</td>
+            <td>{{ record.transaction_date }}</td>
+            <td>{{ record.month }}</td>
+            <td>${{ record.due_amount }}</td>
+            <td>${{ record.payment_amount }}</td>
+            <td>${{ record.due_amount - record.payment_amount }}</td>
+            <td>{{ record.notes }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="7">No transactions found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

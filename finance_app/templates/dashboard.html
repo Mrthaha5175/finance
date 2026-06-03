@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Finance App{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <h2>Monthly Summary</h2>
+    <p>Total monthly amount: <strong>${{ total_due }}</strong></p>
+    <p>Total paid: <strong>${{ total_paid }}</strong></p>
+    <p>Pending due: <strong>${{ total_pending }}</strong></p>
+  </div>
+
+  <div class="card">
+    <h2>Per Person Summary</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Due</th>
+          <th>Paid</th>
+          <th>Pending</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for name, summary in person_summary.items() %}
+          <tr>
+            <td><a href="{{ url_for('customer', name=name) }}">{{ name }}</a></td>
+            <td>${{ summary.due }}</td>
+            <td>${{ summary.paid }}</td>
+            <td>${{ summary.pending }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>All Records</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Month</th>
+          <th>Due</th>
+          <th>Payment</th>
+          <th>Pending</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in records %}
+          <tr>
+            <td>{{ record.id }}</td>
+            <td><a href="{{ url_for('customer', name=record.name) }}">{{ record.name }}</a></td>
+            <td>{{ record.transaction_date }}</td>
+            <td>{{ record.month }}</td>
+            <td>${{ record.due_amount }}</td>
+            <td>${{ record.payment_amount }}</td>
+            <td>${{ record.due_amount - record.payment_amount }}</td>
+            <td>{{ record.notes }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
